@@ -1,0 +1,73 @@
+:root{
+  --bg1:#ff9a9e;
+  --bg2:#fad0c4;
+  --card:#fff8fb;
+  --accent:#ff3b8f;
+  --muted:#6b6b6b;
+  --glass: rgba(255,255,255,0.65);
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial}
+body{
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  display:flex;align-items:center;justify-content:center;padding:2rem;
+}
+.wrap{width:100%;max-width:720px}
+.card{
+  background:var(--card);
+  border-radius:18px;
+  padding:2rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.heart{
+  width:86px;height:86px;background:var(--accent);
+  transform:rotate(-45deg);
+  position:absolute;left:2rem;top:1.5rem;border-radius:12px 12px 0 0;
+  box-shadow:0 6px 18px rgba(0,0,0,0.12);
+}
+.heart::after,.heart::before{
+  content:"";position:absolute;width:86px;height:86px;border-radius:50%;
+  background:var(--accent);
+}
+.heart::before{top:-43px;left:0}
+.heart::after{left:43px;top:0}
+
+h1{font-size:2rem;margin:1.75rem 0 0.2rem}
+.subtitle{color:var(--muted);margin:0 0 1.25rem}
+
+.actions{display:flex;gap:1rem;justify-content:center;margin:0.75rem 0}
+.btn{
+  border:0;padding:0.65rem 1.1rem;border-radius:10px;font-size:1rem;cursor:pointer;
+  background:var(--glass);transition:transform .12s, box-shadow .12s;
+}
+.btn:active{transform:translateY(1px)}
+.btn-yes{background:linear-gradient(90deg,#ffb3d6,#ff6ea1);color:white;box-shadow:0 6px 18px rgba(255,60,140,0.22)}
+.btn-no{background:transparent;border:1px solid rgba(0,0,0,0.06);color:#333}
+.btn-primary{background:var(--accent);color:white;border:0}
+.btn-outline{background:transparent;border:1px solid rgba(0,0,0,0.08);color:#333}
+.btn-link{background:transparent;color:var(--muted);border:0}
+
+.result{margin-top:1.25rem;text-align:center}
+.hidden{display:none!important}
+
+.message-form{margin-top:1rem;display:flex;flex-direction:column;gap:0.5rem;align-items:stretch}
+.message-form input, .message-form textarea{
+  padding:0.6rem;border-radius:8px;border:1px solid #eee;font-size:0.95rem
+}
+.form-actions{display:flex;gap:.5rem;justify-content:center;margin-top:.5rem}
+
+.share{display:flex;gap:.5rem;justify-content:center;margin-top:0.75rem}
+
+.confetti{
+  position:fixed;width:10px;height:14px;left:0;top:-20px;pointer-events:none;opacity:0;
+  transform:translate3d(0,0,0) rotate(0);
+  border-radius:2px;
+}
+@media (max-width:520px){
+  h1{font-size:1.5rem}
+  .card{padding:1rem;border-radius:14px}
+  .heart{display:none}
+}
