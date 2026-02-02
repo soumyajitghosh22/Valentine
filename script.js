@@ -1,247 +1,120 @@
-var canvas = document.getElementById("starfield");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+// Simple interaction and confetti. Editable message saved to localStorage.
+(() => {
+  const yesBtn = document.getElementById('yesBtn');
+  const noBtn = document.getElementById('noBtn');
+  const result = document.getElementById('result');
+  const resultTitle = document.getElementById('resultTitle');
+  const resultMsg = document.getElementById('resultMsg');
+  const messageForm = document.getElementById('messageForm');
+  const fromName = document.getElementById('fromName');
+  const note = document.getElementById('note');
+  const sendBtn = document.getElementById('sendBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const copyBtn = document.getElementById('copyBtn');
+  const mailto = document.getElementById('mailto');
+  const shareArea = document.getElementById('share');
+  const confettiRoot = document.getElementById('confetti-root');
 
-var context = canvas.getContext("2d");
-var stars = 500;
-var colorrange = [0, 60, 240];
-var starArray = [];
-
-function getRandom(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-// Initialize stars with random opacity values
-for (var i = 0; i < stars; i++) {
-    var x = Math.random() * canvas.offsetWidth;
-    var y = Math.random() * canvas.offsetHeight;
-    var radius = Math.random() * 1.2;
-    var hue = colorrange[getRandom(0, colorrange.length - 1)];
-    var sat = getRandom(50, 100);
-    var opacity = Math.random();
-    starArray.push({ x, y, radius, hue, sat, opacity });
-}
-
-var frameNumber = 0;
-var opacity = 0;
-var secondOpacity = 0;
-var thirdOpacity = 0;
-
-var baseFrame = context.getImageData(0, 0, window.innerWidth, window.innerHeight);
-
-function drawStars() {
-    for (var i = 0; i < stars; i++) {
-        var star = starArray[i];
-
-        context.beginPath();
-        context.arc(star.x, star.y, star.radius, 0, 360);
-        context.fillStyle = "hsla(" + star.hue + ", " + star.sat + "%, 88%, " + star.opacity + ")";
-        context.fill();
-    }
-}
-
-function updateStars() {
-    for (var i = 0; i < stars; i++) {
-        if (Math.random() > 0.99) {
-            starArray[i].opacity = Math.random();
-        }
-    }
-}
-
-const button = document.getElementById("valentinesButton");
-
-button.addEventListener("click", () => {
-  if (button.textContent === "Click Me! ❤") {
-    button.textContent = "loading...";
-    fetch('send_mail.php')
-      .then(response => {
-        if (response.ok) {
-          button.textContent = "Check Your Email 🙃";
-        } else {
-          console.error('Failed to send email');
-          button.textContent = "Error 😞";
-        }
-      })
-      .catch(error => {
-        // Handle network errors or other issues
-        console.error('Error:', error);
-        button.textContent = "Error 😞";
-      });
+  // load saved if present
+  const saved = JSON.parse(localStorage.getItem('valentine-msg') || 'null');
+  if (saved) {
+    fromName.value = saved.name || '';
+    note.value = saved.note || '';
   }
-});
 
-function drawTextWithLineBreaks(lines, x, y, fontSize, lineHeight) {
-    lines.forEach((line, index) => {
-        context.fillText(line, x, y + index * (fontSize + lineHeight));
-    });
-}
+  function showResult(title, msg) {
+    resultTitle.textContent = title;
+    resultMsg.textContent = msg;
+    result.classList.remove('hidden');
+  }
 
-function drawText() {
-    var fontSize = Math.min(30, window.innerWidth / 24); // Adjust font size based on screen width
-    var lineHeight = 8;
+  function showMessageForm() {
+    messageForm.classList.remove('hidden');
+    messageForm.setAttribute('aria-hidden','false');
+    shareArea.classList.remove('hidden');
+  }
 
-    context.font = fontSize + "px Comic Sans MS";
-    context.textAlign = "center";
-    
-    // glow effect
-    context.shadowColor = "rgba(45, 45, 255, 1)";
-    context.shadowBlur = 8;
-    context.shadowOffsetX = 0;
-    context.shadowOffsetY = 0;
+  yesBtn.addEventListener('click', () => {
+    showResult("They said Yes! 💞", "Yay — a new chapter begins. Add your name and a sweet note below and share it!");
+    showMessageForm();
+    launchConfetti(110);
+  });
 
-    if(frameNumber < 250){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-        context.fillText("everyday day I cannot believe how lucky I am", canvas.width/2, canvas.height/2);
-        opacity = opacity + 0.01;
+  noBtn.addEventListener('click', () => {
+    showResult("It’s okay 💛", "Not every love story starts today. You can always try again or send a friendly note.");
+    messageForm.classList.add('hidden');
+    shareArea.classList.remove('hidden');
+    launchConfetti(20, {colors:['#FFD8B1','#F4C2C2']});
+  });
+
+  sendBtn.addEventListener('click', () => {
+    const name = fromName.value.trim() || 'Someone special';
+    const noteText = note.value.trim() || "Thinking of you 💌";
+    localStorage.setItem('valentine-msg', JSON.stringify({name, note: noteText}));
+    resultMsg.textContent = `Message saved — "${noteText}" — from ${name}.`;
+    updateShareLink(name, noteText);
+  });
+
+  resetBtn.addEventListener('click', () => {
+    localStorage.removeItem('valentine-msg');
+    fromName.value = '';
+    note.value = '';
+    resultMsg.textContent = 'Message reset.';
+    updateShareLink('', '');
+  });
+
+  copyBtn.addEventListener('click', async () => {
+    const name = fromName.value.trim() || 'Someone special';
+    const noteText = note.value.trim() || "Thinking of you 💌";
+    const text = `Will you be my Valentine?\n\n"${noteText}"\n— ${name}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      copyBtn.textContent = 'Copied!';
+      setTimeout(()=> copyBtn.textContent = 'Copy message', 1500);
+    } catch(e){ alert('Copy failed — you can select and copy manually.'); }
+  });
+
+  function updateShareLink(name, noteText){
+    const subject = encodeURIComponent('A little Valentine 💌');
+    const body = encodeURIComponent(`Will you be my Valentine?\n\n"${noteText}"\n— ${name}`);
+    mailto.href = `mailto:?subject=${subject}&body=${body}`;
+  }
+
+  // Confetti: creates small divs with random colors and fall animation
+  function launchConfetti(count = 60, opts = {}) {
+    const colors = opts.colors || ['#ff6ea1','#ffd166','#ff9a9e','#f6c1ff','#ffe3f1','#ffb3d6'];
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    for (let i=0;i<count;i++){
+      const el = document.createElement('div');
+      el.className = 'confetti';
+      const size = (Math.random()*10)+6;
+      el.style.width = `${size}px`;
+      el.style.height = `${Math.random()*12 + 8}px`;
+      el.style.left = `${Math.random()*w}px`;
+      el.style.background = colors[Math.floor(Math.random()*colors.length)];
+      el.style.opacity = Math.random()*0.9 + 0.4;
+      confettiRoot.appendChild(el);
+
+      // animate using CSS transforms via requestAnimationFrame
+      const rotation = (Math.random()*720)-360;
+      const duration = Math.random()*2200 + 1200;
+      const fall = h + 100 + Math.random()*200;
+      const startX = parseFloat(el.style.left);
+      const drift = (Math.random()-0.5) * 300;
+
+      const start = performance.now();
+      function frame(now){
+        const t = Math.min(1, (now - start)/duration);
+        el.style.transform = `translate3d(${drift*t}px, ${fall*t}px, 0) rotate(${rotation * t}deg)`;
+        el.style.opacity = String(1 - t);
+        if (t < 1) requestAnimationFrame(frame);
+        else el.remove();
+      }
+      requestAnimationFrame(frame);
     }
-    //fades out the text by decreasing the opacity
-    if(frameNumber >= 250 && frameNumber < 500){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-        context.fillText("everyday day I cannot believe how lucky I am", canvas.width/2, canvas.height/2);
-        opacity = opacity - 0.01;
-    }
+  }
 
-    //needs this if statement to reset the opacity before next statement on canvas
-    if(frameNumber == 500){
-        opacity = 0;
-    }
-    if(frameNumber > 500 && frameNumber < 750){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-
-        if (window.innerWidth < 600) {           //shortens long sentence for mobile screens
-            drawTextWithLineBreaks(["amongst trillions and trillions of stars,", "over billions of years"], canvas.width / 2, canvas.height / 2, fontSize, lineHeight);
-        } else {
-            context.fillText("amongst trillions and trillions of stars, over billions of years", canvas.width/2, canvas.height/2);
-        }
-
-        opacity = opacity + 0.01;
-    }
-    if(frameNumber >= 750 && frameNumber < 1000){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-        
-        if (window.innerWidth < 600) {
-            drawTextWithLineBreaks(["amongst trillions and trillions of stars,", "over billions of years"], canvas.width / 2, canvas.height / 2, fontSize, lineHeight);
-        } else {
-            context.fillText("amongst trillions and trillions of stars, over billions of years", canvas.width/2, canvas.height/2);
-        }
-
-        opacity = opacity - 0.01;
-    }
-
-    if(frameNumber == 1000){
-        opacity = 0;
-    }
-    if(frameNumber > 1000 && frameNumber < 1250){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-        context.fillText("to be alive, and to get to spend this life with you", canvas.width/2, canvas.height/2);
-        opacity = opacity + 0.01;
-    }
-    if(frameNumber >= 1250 && frameNumber < 1500){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-        context.fillText("to be alive, and to get to spend this life with you", canvas.width/2, canvas.height/2);
-        opacity = opacity - 0.01;
-    }
-
-    if(frameNumber == 1500){
-        opacity = 0;
-    }
-    if(frameNumber > 1500 && frameNumber < 1750){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-        context.fillText("is so incredibly, unfathomably unlikely", canvas.width/2, canvas.height/2);
-        opacity = opacity + 0.01;
-    }
-    if(frameNumber >= 1750 && frameNumber < 2000){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-        context.fillText("is so incredibly, unfathomably unlikely", canvas.width/2, canvas.height/2);
-        opacity = opacity - 0.01;
-    }
-
-    if(frameNumber == 2000){
-        opacity = 0;
-    }
-    if(frameNumber > 2000 && frameNumber < 2250){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-
-        if (window.innerWidth < 600) {
-            drawTextWithLineBreaks(["and yet here I am to get the impossible", "chance to get to know you"], canvas.width / 2, canvas.height / 2, fontSize, lineHeight);
-        } else {
-            context.fillText("and yet here I am to get the impossible chance to get to know you", canvas.width/2, canvas.height/2);
-        }
-
-        opacity = opacity + 0.01;
-    }
-    if(frameNumber >= 2250 && frameNumber < 2500){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-
-        if (window.innerWidth < 600) {
-            drawTextWithLineBreaks(["and yet here I am to get the impossible", "chance to get to know you"], canvas.width / 2, canvas.height / 2, fontSize, lineHeight);
-        } else {
-            context.fillText("and yet here I am to get the impossible chance to get to know you", canvas.width/2, canvas.height/2);
-        }
-        
-        opacity = opacity - 0.01;
-    }
-
-    if(frameNumber == 2500){
-        opacity = 0;
-    }
-    if(frameNumber > 2500 && frameNumber < 99999){
-        context.fillStyle = `rgba(45, 45, 255, ${opacity})`;
-
-        if (window.innerWidth < 600) {
-            drawTextWithLineBreaks(["I love you so much {name}, more than", "all the time and space in the universe can contain"], canvas.width / 2, canvas.height / 2, fontSize, lineHeight);
-        } else {
-            context.fillText("I love you so much {name}, more than all the time and space in the universe can contain", canvas.width/2, canvas.height/2);
-        }
-
-        opacity = opacity + 0.01;
-    }
-    
-    if(frameNumber >= 2750 && frameNumber < 99999){
-        context.fillStyle = `rgba(45, 45, 255, ${secondOpacity})`;
-
-
-        if (window.innerWidth < 600) {
-            drawTextWithLineBreaks(["and I can't wait to spend all the time in", "the world to share that love with you!"], canvas.width / 2, (canvas.height/2 + 60), fontSize, lineHeight);
-        } else {
-            context.fillText("and I can't wait to spend all the time in the world to share that love with you!", canvas.width/2, (canvas.height/2 + 50));
-        }
-
-        secondOpacity = secondOpacity + 0.01;
-    }
-
-    if(frameNumber >= 3000 && frameNumber < 99999){
-        context.fillStyle = `rgba(45, 45, 255, ${thirdOpacity})`;
-        context.fillText("Happy Valentine's Day <3", canvas.width/2, (canvas.height/2 + 120));
-        thirdOpacity = thirdOpacity + 0.01;
-
-        button.style.display = "block";
-    }   
-
-     // Reset the shadow effect after drawing the text
-     context.shadowColor = "transparent";
-     context.shadowBlur = 0;
-     context.shadowOffsetX = 0;
-     context.shadowOffsetY = 0;
-}
-
-function draw() {
-    context.putImageData(baseFrame, 0, 0);
-
-    drawStars();
-    updateStars();
-    drawText();
-
-    if (frameNumber < 99999) {
-        frameNumber++;
-    }
-    window.requestAnimationFrame(draw);
-}
-
-window.addEventListener("resize", function () {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    baseFrame = context.getImageData(0, 0, window.innerWidth, window.innerHeight);
-});
-
-window.requestAnimationFrame(draw);
+  // initialize share link from saved or empty
+  updateShareLink((fromName.value||''), (note.value||''));
+})();
