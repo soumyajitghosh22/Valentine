@@ -1,50 +1,35 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Will you be my Valentine?</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <main class="wrap" role="main">
-    <div class="card" aria-live="polite">
-      <div class="heart" aria-hidden="true"></div>
-      <h1 id="question">Will you be my Valentine?</h1>
-      <p class="subtitle">Say it with a click 💌</p>
-
-      <div class="actions">
-        <button id="yesBtn" class="btn btn-yes" aria-describedby="yesDesc">Yes 💖</button>
-        <button id="noBtn" class="btn btn-no" aria-describedby="noDesc">No 😢</button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Import Question</title>
+    <link rel="stylesheet" href="./public/css/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="banner-gif">
+        <img id="banner" src="./public/images/mid.gif" alt="banner" />
       </div>
-
-      <div id="result" class="result hidden" role="region" aria-labelledby="resultTitle">
-        <h2 id="resultTitle"></h2>
-        <p id="resultMsg"></p>
-
-        <form id="messageForm" class="message-form hidden" aria-hidden="true">
-          <label for="fromName">Your name</label>
-          <input id="fromName" name="fromName" placeholder="e.g. Alex" />
-
-          <label for="note">Add a note (optional)</label>
-          <textarea id="note" name="note" rows="3" placeholder="Write something sweet..."></textarea>
-
-          <div class="form-actions">
-            <button id="sendBtn" type="button" class="btn btn-primary">Send / Save</button>
-            <button id="resetBtn" type="button" class="btn btn-link">Reset</button>
-          </div>
-        </form>
-
-        <div class="share hidden" id="share">
-          <button id="copyBtn" class="btn">Copy message</button>
-          <a id="mailto" class="btn btn-outline" href="#" target="_blank" rel="noopener">Share via email</a>
-        </div>
+      <h1 id="question-heading">Will you be my valentine?</h1>
+      <div class="buttons">
+        <button id="yes-button"><p>Yes</p></button>
+        <button id="no-button"><p>No</p></button>
+      </div>
+      <div class="message">
+        <h2 id="success-message">Yepppie, see you sooonnn :3</h2>
+        
+        <h6>Creator: <a class="creator" href="https://github.com/Aayush-683">Aayush683 ;)</a></h6>
+      </div>
+      <div class="language-selector">
+        <label for="language-select">Choose Language:</label>
+        <select id="language-select" onchange="changeLanguage()">
+          <option value="english">English</option>
+          <option value="french">French</option>
+          <option value="thai">แบบไทย</option>
+        </select>
       </div>
     </div>
-  </main>
-
-  <div id="confetti-root" aria-hidden="true"></div>
-
-  <script src="script.js"></script>
-</body>
+    <script src="./public/js/script.js"></script>
+  </body>
 </html>
