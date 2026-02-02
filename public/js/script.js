@@ -37,7 +37,7 @@ const answers_no = {
 
 answers_yes = {
     "english": "Yes",
-    "Bengali": "হ্যাঁ"
+    "bengali": "হ্যাঁ"
 }
 
 let language = "english"; // Default language is English
