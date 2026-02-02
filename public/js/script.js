@@ -124,7 +124,7 @@ function changeLanguage() {
     // Update success message
     const successMessage = document.getElementById("success-message");
     if (language === "bengali") {
-        successMessage.textContent = "দুস্থ দরিদ্র মানুষ কে এরকম পরমানন্দ প্রদান করিবার জন্য অশেষ ধন্যবাদ :3";
+        successMessage.textContent = "দুস্থ দরিদ্র মানুষ কে এরকম পরমানন্দ প্রদান করিবার জন্য অশেষ ধন্যবাদ, খুব শীঘ্রই দেখা হচ্ছে :)";
     } else {
         successMessage.textContent = "Yepppie, see you sooonnn :3";
     }
