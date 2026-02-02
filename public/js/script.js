@@ -16,46 +16,28 @@ const answers_no = {
         "I am begging you to stop!",
         "Ok, Let's just start over.."
     ],
-    french: [
-        "Non",
-        "Tu es sûr ?",
-        "Tu es vraiment sûr ??",
-        "Tu es vraiment vraiment sûr ???",
-        "Réfléchis encore?",
-        "Tu ne crois pas aux deuxièmes chances ?",
-        "Pourquoi tu es si froid?",
-        "Peut-être, on peut en parler ?",
-        "Je ne vais pas demander encore une fois!",
-        "D'accord, maintenant ca me fait mal!",
-        "Tu es juste méchant!",
-        "Pourquoi tu me fais ça?",
-        "Donnez-moi une chance plz!",
-        "Je te supplie d'arrêter!",
-        "D'accord, recommençons.."
-    ],
-    thai: [
-        "ไม่อ่ะ",
-        "แน่ใจจริงๆหรอคะ?",
-        "แน่ใจจริงๆ จริงๆนะคะ?",
-        "อย่าบอกนะว่านี่แน่ใจสุดๆแล้วจริงๆ ?",
-        "ลองคิดดูอีกทีหน่อยสิคะ..",
-        "ขอโอกาศที่สองทีค่ะ..",
-        "อย่าเย็นชาสิคะ กระซิกๆ",
-        "ขอร้องนะคะ",
-        "น้าาาๆๆๆๆๆ",
-        "เราจะร้องไห้เอานะ กระซิกๆ",
-        "จะเอางี้ๆจริงหรอคะ",
-        "ฮือออออ",
-        "ขอโอกาศครั้งที่สองที่ค่ะ!",
-        "ขอร้องละค่าาา",
-        "โอเคค่ะ.. งั้นเริ่มใหม่ !"
+    bengali: [
+        "না",
+        "তুমি কি নিশ্চিত?",
+        "তুমি কি খুবই নিশ্চিত?",
+        "তুমি কি সত্যিই খুবই নিশ্চিত?",
+        "আরেকবার ভাব প্লিজ",
+        "দ্বিতীয় বার সুযোগে বিশ্বাস করো না?",
+        "এরকম পাষান হৃদয় কেন তোমার?",
+        "এই বিষয়টা নিয়ে আমরা আরো কথা বলতে পারি!",
+        "আমি কিন্তু আর জিজ্ঞেস করবো না কোনো দিন",
+        "এবার কিন্তু আমাকে দুঃখ দিচ্ছ তুমি!",
+        "তুমি কিন্তু এবার এটা খারাপ করছো",
+        "কেন এরকম করছো আমার সাথে?",
+        "একবার তো চান্স দাও!",
+        "দয়া করে এরকম করো না আর লক্ষীটি!",
+        "ঠিক আছে আরেকবার প্রথম থেকে শুরু করা যাক"
     ]
 };
 
 answers_yes = {
     "english": "Yes",
-    "french": "Oui",
-    "Thailand": "เย่ คืนดีกันแล้วน้า"
+    "Bengali": "হ্যাঁ"
 }
 
 let language = "english"; // Default language is English
@@ -123,10 +105,8 @@ function changeLanguage() {
 
     // Update question heading
     const questionHeading = document.getElementById("question-heading");
-    if (language === "french") {
-        questionHeading.textContent = "Tu veux être mon valentin?";
-    } else if (language === "thai") {
-        questionHeading.textContent = "คืนดีกับเราได้อ่ะป่าว?";
+    if (language === "bengali") {
+        questionHeading.textContent = "তুমি কি আমার সাথে সারাজীবন কাটাবে প্রিয়তমা?";
     } else {
         questionHeading.textContent = "Will you be my valentine?";
     }
@@ -143,10 +123,8 @@ function changeLanguage() {
 
     // Update success message
     const successMessage = document.getElementById("success-message");
-    if (language === "french") {
-        successMessage.textContent = "Yepppie, à bientôt :3";
-    } else if (language === "thai") {
-        successMessage.textContent = "ฮูเร่ คืนดีกันแล้วน้า :3";
+    if (language === "bengali") {
+        successMessage.textContent = "দুস্থ দরিদ্র মানুষ কে এরকম পরমানন্দ প্রদান করিবার জন্য অশেষ ধন্যবাদ :3";
     } else {
         successMessage.textContent = "Yepppie, see you sooonnn :3";
     }
